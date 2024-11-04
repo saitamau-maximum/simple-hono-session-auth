@@ -1,0 +1,11 @@
+{
+  "name": "maximum-webken-hono-2023",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.5",
+    "hono": "^4.6.9",
+    "sqlite3": "^5.1.7"
+  }
+}
