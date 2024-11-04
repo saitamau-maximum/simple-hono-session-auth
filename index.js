@@ -1,7 +1,16 @@
+const sqlite3 = require("sqlite3").verbose();
+const queries = require("./queries");
 const { serve } = require("@hono/node-server");
 const { Hono } = require("hono");
 const templates = require("./templates");
 const { csrf } = require("hono/csrf");
+
+const db = new sqlite3.Database("database.db");
+
+db.serialize(() => {
+  db.run(queries.Users.createTable);
+});
+
 const app = new Hono();
 
 app.use(csrf()); // セキュリティとしてCSRF対策が必要なので追加
