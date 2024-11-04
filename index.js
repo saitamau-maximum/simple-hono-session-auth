@@ -29,6 +29,47 @@ app.get("/login", (c) => {
   return c.html(response);
 });
 
+app.post("/login", async (c) => {
+  const { email, password } = await c.req.parseBody();
+  if (!email || !password) {
+    return c.redirect("/login");
+  }
+
+  try {
+    const user = await new Promise((resolve, reject) => {
+      db.get(queries.Users.findByEmail, [email], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
+    if (!user) {
+      return c.redirect("/login");
+    }
+    // パスワードの比較はbcrypt.compareを使う
+    const isValidPassword = await bcrypt.compare(
+      password,
+      user.hashed_password
+    );
+    // パスワードが一致しない場合はログインページにリダイレクト
+    if (!isValidPassword) {
+      return c.redirect("/login");
+    }
+    const sessionID = Math.random().toString(36).slice(-8); // セッションIDを生成
+    sessionMap.set(sessionID, user.id); // セッションIDとユーザIDを紐付ける
+    setCookie(c, "sessionID", sessionID, {
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 1週間後に削除
+      httpOnly: true, // クライアント側からアクセスできないようにする
+      SameSite: "Strict", // クロスサイトリクエストを防ぐ
+    });
+    return c.redirect("/my-profile");
+  } catch (err) {
+    return c.redirect("/login");
+  }
+});
+
 app.get("/signup", (c) => {
   const message = getCookie(c, "message");
   const response = templates.HTML(
