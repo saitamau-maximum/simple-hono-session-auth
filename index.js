@@ -29,6 +29,13 @@ app.get("/login", (c) => {
   return c.html(response);
 });
 
+app.get("/logout", (c) => {
+  const sessionID = getCookie(c, "sessionID");
+  sessionMap.delete(sessionID); // セッションIDを削除
+  deleteCookie(c, "sessionID"); // クッキーを削除
+  return c.redirect("/");
+});
+
 app.post("/login", async (c) => {
   const { email, password } = await c.req.parseBody();
   if (!email || !password) {
