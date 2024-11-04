@@ -42,10 +42,16 @@ const PROFILE_PAGE_TEMPLATE = (email) => html`
   <a href="/logout">ログアウト</a>
 `;
 
+const LOGIN_ERROR_PAGE_TEMPLATE = html`
+  <h1>このページにアクセスするにはログインが必要です</h1>
+  <a href="/login">ログイン</a>
+`;
+
 module.exports = {
   HTML,
   TOP_PAGE_TEMPLATE,
   LOGIN_PAGE_TEMPLATE,
   SIGNUP_PAGE_TEMPLATE,
   PROFILE_PAGE_TEMPLATE,
+  LOGIN_ERROR_PAGE_TEMPLATE,
 };

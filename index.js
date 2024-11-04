@@ -78,13 +78,28 @@ app.post("/signup", async (c) => {
   }
 });
 
-app.get("/my-profile", (c) => {
-  // ログインしないとアクセスできないページにする
-  const response = templates.HTML(
-    "User Page",
-    templates.PROFILE_PAGE_TEMPLATE("TODO ここにemailを入れる")
-  );
-  return c.html(response);
+app.get("/my-profile", async (c) => {
+  const sessionID = getCookie(c, "sessionID");
+  const userID = sessionMap.get(sessionID);
+  if (!userID) {
+    return c.html(templates.LOGIN_ERROR_PAGE_TEMPLATE); // ログインしていない場合はエラーページを表示
+  }
+
+  try {
+    const user = await new Promise((resolve, reject) => {
+      db.get(queries.Users.findByID, [userID], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
+    return c.html(templates.PROFILE_PAGE_TEMPLATE(user.email));
+  } catch (err) {
+    // ここは本来到達しないはずだが、万が一エラーが発生した場合はエラーページを表示
+    return c.html(templates.LOGIN_ERROR_PAGE_TEMPLATE);
+  }
 });
 
 serve(app);
