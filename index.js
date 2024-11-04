@@ -1,8 +1,10 @@
 const { serve } = require("@hono/node-server");
 const { Hono } = require("hono");
 const templates = require("./templates");
-
+const { csrf } = require("hono/csrf");
 const app = new Hono();
+
+app.use(csrf()); // セキュリティとしてCSRF対策が必要なので追加
 
 app.get("/", (c) => {
   const response = templates.HTML("Top Page", templates.TOP_PAGE_TEMPLATE);
