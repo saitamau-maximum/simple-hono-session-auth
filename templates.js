@@ -27,8 +27,9 @@ const LOGIN_PAGE_TEMPLATE = html`
   </form>
 `;
 
-const SIGNUP_PAGE_TEMPLATE = html`
+const SIGNUP_PAGE_TEMPLATE = (message) => html`
   <h1>登録</h1>
+  <p>${message}</p>
   <form action="/signup" method="post">
     <input type="text" name="email" placeholder="メールアドレス" />
     <input type="password" name="password" placeholder="パスワード" />
